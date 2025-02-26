@@ -5,7 +5,7 @@ import { AuthRequest } from "../types/express"; // Import custom request type
 import { createUser, getUserByUsername } from "../models/userModel";
 import { createEmployee, getEmployeeNameByUserId } from "../models/employeeModel";
 
-export const loginUser = async (req: Request, res: Response): Promise<void>  => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
   try {
     // Fetch user from database using model function
@@ -28,28 +28,28 @@ export const loginUser = async (req: Request, res: Response): Promise<void>  => 
       expiresIn: "1h",
     });
 
-    const name = await getEmployeeNameByUserId(user.id)
+    const name = await getEmployeeNameByUserId(user.id);
 
-    res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-      });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
 
-      res.json({ message: "Login successful", role: user.role, name });
+    res.json({ message: "Login successful", role: user.role, name });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 };
 
 export const logoutUser = (req: Request, res: Response): void => {
-    res.clearCookie('token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
-    res.json({ message: "Logout successful" });
-  };
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  res.json({ message: "Logout successful" });
+};
 
 export const registerUser = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -60,7 +60,7 @@ export const registerUser = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    if (role !== 'employee') {
+    if (role !== "employee") {
       res.status(400).json({ message: "Only employees can be added" });
       return;
     }
@@ -84,4 +84,3 @@ export const registerUser = async (req: AuthRequest, res: Response): Promise<voi
     res.status(500).json({ message: "Internal server error" });
   }
 };
-

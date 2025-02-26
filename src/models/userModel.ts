@@ -36,5 +36,3 @@ export const getUserByUsername = async (username: string): Promise<User | null> 
     throw error;
   }
 };
-
-

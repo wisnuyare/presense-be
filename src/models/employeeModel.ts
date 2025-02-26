@@ -10,55 +10,55 @@ export const createEmployee = async (name: string, birthdate: string, userId: nu
 };
 
 export const getAllEmployees = async (search?: string) => {
-    let query = "SELECT * FROM employees";
-    let params: any[] = [];
-    if (search) {
-        query += " WHERE name LIKE ?";
-        params.push(`%${search}%`);
-    }
+  let query = "SELECT * FROM employees";
+  let params: any[] = [];
+  if (search) {
+    query += " WHERE name LIKE ?";
+    params.push(`%${search}%`);
+  }
 
-    const [employees] = await db.execute(query, params);
-    return employees;
-}
+  const [employees] = await db.execute(query, params);
+  return employees;
+};
 
 export const getEmployeeIdByUserId = async (user_id: number): Promise<number | null> => {
-    let query = `
+  let query = `
         SELECT id
         FROM employees 
         WHERE user_id = ?
     `;
-    let params: any[] = [user_id];
+  let params: any[] = [user_id];
 
-    const [rows] = await db.execute<RowDataPacket[]>(query, params);
+  const [rows] = await db.execute<RowDataPacket[]>(query, params);
 
-    if (rows.length > 0) {
-        return rows[0].id;
-    } else {
-        return null;
-    }
+  if (rows.length > 0) {
+    return rows[0].id;
+  } else {
+    return null;
+  }
 };
 
 export const getEmployeeNameByUserId = async (user_id: number): Promise<number | null> => {
-    let query = `
+  let query = `
         SELECT name
         FROM employees 
         WHERE user_id = ?
     `;
-    let params: any[] = [user_id];
+  let params: any[] = [user_id];
 
-    const [rows] = await db.execute<RowDataPacket[]>(query, params);
+  const [rows] = await db.execute<RowDataPacket[]>(query, params);
 
-    if (rows.length > 0) {
-        return rows[0].name;
-    } else {
-        return null;
-    }
+  if (rows.length > 0) {
+    return rows[0].name;
+  } else {
+    return null;
+  }
 };
 
 export const updateEmployee = async (name: string, birthdate: string, userId: number) => {
-    await db.query("UPDATE employees SET name = ?, birthdate = ? WHERE user_id = ?", [
-      name,
-      birthdate,
-      userId,
-    ]);
+  await db.query("UPDATE employees SET name = ?, birthdate = ? WHERE user_id = ?", [
+    name,
+    birthdate,
+    userId,
+  ]);
 };

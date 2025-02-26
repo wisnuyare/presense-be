@@ -9,6 +9,6 @@ router.post("/login", loginUser);
 
 router.post("/logout", logoutUser);
 
-router.post('/register', authenticateUser, authorizeRole(UserRole.HR), registerUser);
+router.post("/register", authenticateUser, authorizeRole(UserRole.HR), registerUser);
 
 export default router;

@@ -3,9 +3,8 @@ import { Response, NextFunction } from "express";
 import { AuthRequest } from "../types/express";
 import { UserRole } from "../types/userRole";
 
-
 export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunction): void => {
-    const token = req.cookies.token;
+  const token = req.cookies.token;
 
   if (!token) {
     res.status(401).json({ message: "Access denied. No token provided." });
@@ -20,7 +19,6 @@ export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunc
       return;
     }
 
-
     req.user = decoded as {
       id: number;
       username: string;
@@ -34,11 +32,11 @@ export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunc
 };
 
 export const authorizeRole = (role: UserRole) => {
-    return (req: AuthRequest, res: Response, next: NextFunction): void => {
-      if (req.user?.role !== role) {
-        res.status(403).json({ message: "Access denied. Insufficient permissions." });
-      } else {
-        next();
-      }
-    };
+  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+    if (req.user?.role !== role) {
+      res.status(403).json({ message: "Access denied. Insufficient permissions." });
+    } else {
+      next();
+    }
   };
+};

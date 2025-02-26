@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 import { getAllEmployees, getEmployeeIdByUserId, updateEmployee } from "../models/employeeModel";
 
 export const fetchEmployees = async (req: Request, res: Response) => {
-    try {
-        const search = req.query.search as string;
+  try {
+    const search = req.query.search as string;
 
-        const employees = await getAllEmployees(search);
-        res.json(employees);
-    } catch (error) {
-        console.error("Error fetching employees:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
+    const employees = await getAllEmployees(search);
+    res.json(employees);
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const editEmployee = async (req: Request, res: Response): Promise<void> => {
@@ -22,16 +22,14 @@ export const editEmployee = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-
     // Check if user already exists
     const isExist = await getEmployeeIdByUserId(user_id);
     if (!isExist) {
       res.status(400).json({ message: "Employee doesn't exist" });
       return;
     }
-    
-    await updateEmployee(name, birthdate, user_id);
 
+    await updateEmployee(name, birthdate, user_id);
 
     res.status(201).json({ message: "Employee edited successfully" });
   } catch (error) {
