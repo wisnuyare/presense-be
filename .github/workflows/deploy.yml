@@ -49,10 +49,10 @@ jobs:
           region: ${{ env.REGION }}
           env_vars: |
             NODE_ENV=production
-            DB_HOST=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_NAME }}
+            DB_HOST=/cloudsql/${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_NAME=${{ secrets.DB_NAME }}
             GCS_BUCKET_NAME= ${{secrets.GCS_BUCKET_NAME}}
             JWT_SECRET= ${{secrets.JWT_SECRET}}
-          flags: --set-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_NAME }}
+          flags: --set-cloudsql-instances=${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_NAME }}
