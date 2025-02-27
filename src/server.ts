@@ -10,10 +10,25 @@ import authRoutes from "./routes/authRoutes";
 import attendanceRoutes from "./routes/attendanceRoutes";
 import employeeRoutes from "./routes/employeeRoutes";
 import uploadRoutes from "./routes/uploadRoutes";
+import db from "./config/db";
 
 dotenv.config();
 
 const app = express();
+
+async function testDatabaseConnection() {
+  try {
+      const connection = await db.getConnection();
+      const [rows] = await connection.execute('SELECT DATABASE()');
+      connection.release();
+      console.log('Database connection test:', rows);
+  } catch (error) {
+      console.error('Database connection test failed:', error);
+  }
+}
+
+// Call this function when your application starts or on a specific route
+
 
 app.use(
   cors({
@@ -50,4 +65,5 @@ app.use("/api", uploadRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  testDatabaseConnection();
 });
