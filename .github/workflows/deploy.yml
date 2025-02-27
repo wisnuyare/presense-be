@@ -1,18 +1,56 @@
-name: Test GCP Auth
+name: Deploy to GCP
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: asia-southeast2
+  REPOSITORY: presensee-repo
+  SERVICE_NAME: ${{ secrets.GCP_PROJECT_ID }}
+  DB_INSTANCE: ${{ secrets.DB_NAME }}
 
 jobs:
-  auth:
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v3
+
       - name: Authenticate to Google Cloud
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/auth@v1 # Add this step
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-      - name: List Projects
-        run: gcloud projects list
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker Auth
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Build and Push Docker Image
+        env:
+          IMAGE_URI: ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        run: |
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          region: ${{ env.REGION }}
+          env_vars: |
+            NODE_ENV=production
+            DB_HOST=/cloudsql/${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ env.DB_INSTANCE }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_NAME=${{ secrets.DB_NAME }}
+          flags: --set-cloudsql-instances=${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ env.DB_INSTANCE }}
