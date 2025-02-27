@@ -6,8 +6,11 @@ on:
       - master
 
 env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: asia-southeast2
   REPOSITORY: presensee-repo
+  SERVICE_NAME: ${{ secrets.GCP_PROJECT_ID }}
+  DB_INSTANCE: ${{ secrets.DB_NAME }}
 
 jobs:
   setup-build-deploy:
@@ -26,7 +29,7 @@ jobs:
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
 
       - name: Configure Docker Auth
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
