@@ -1,5 +1,4 @@
 import express from "express";
-import { check } from "express-validator";
 import { authenticateUser, authorizeRole } from "../middleware/authMiddleware";
 import { recordAttendance, fetchAttendance } from "../controllers/attendanceController";
 import { UserRole } from "../types/userRole";
