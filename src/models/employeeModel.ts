@@ -1,5 +1,5 @@
-import db from "../config/db";
 import { RowDataPacket } from "mysql2/promise";
+import db from "../config/db";
 
 export const createEmployee = async (name: string, birthdate: string, userId: number) => {
   await db.query("INSERT INTO employees (name, birthdate, user_id) VALUES (?, ?, ?)", [

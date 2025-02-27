@@ -24,7 +24,7 @@ export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunc
       username: string;
       password: string;
       role: "employee" | "hr";
-    }; // Ensure it matches your defined type
+    };
     next();
   } catch (error) {
     res.status(400).json({ message: "Invalid token." });

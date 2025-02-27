@@ -29,7 +29,7 @@ export const editEmployee = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    await updateEmployee(name, birthdate, user_id);
+    await updateEmployee(name.trim(), birthdate, user_id);
 
     res.status(201).json({ message: "Employee edited successfully" });
   } catch (error) {

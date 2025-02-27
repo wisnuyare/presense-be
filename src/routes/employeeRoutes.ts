@@ -1,12 +1,18 @@
 import express from "express";
-import { editEmployee, fetchEmployees } from "../controllers/employeeController";
+import { check } from "express-validator";
 import { authenticateUser, authorizeRole } from "../middleware/authMiddleware";
+import { editEmployee, fetchEmployees } from "../controllers/employeeController";
 import { UserRole } from "../types/userRole";
+import { validateInput } from "../middleware/validateInput";
+
+const registerValidationRules = [
+  check("name").trim().escape().isLength({ min: 1 }).withMessage("Name is required"),
+];
 
 const router = express.Router();
 
 router.get("/employees", authenticateUser, authorizeRole(UserRole.HR), fetchEmployees);
 
-router.put("/employees", authenticateUser, authorizeRole(UserRole.HR), editEmployee);
+router.put("/employees", validateInput(registerValidationRules), authenticateUser, authorizeRole(UserRole.HR), editEmployee);
 
 export default router;

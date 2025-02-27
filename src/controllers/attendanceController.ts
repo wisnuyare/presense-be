@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { logAttendance, getAllAttendance } from "../models/attendanceModel";
 import { AuthRequest } from "../types/express";
 import { getEmployeeIdByUserId } from "../models/employeeModel";
+import { logAttendance, getAllAttendance } from "../models/attendanceModel";
 
 export const recordAttendance = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -13,7 +13,6 @@ export const recordAttendance = async (req: AuthRequest, res: Response): Promise
 
     const userId = req.user.id;
 
-    // Fetch the corresponding employee_id using the separate service function
     const employee_id = await getEmployeeIdByUserId(userId);
 
     if (!employee_id) {
@@ -21,7 +20,7 @@ export const recordAttendance = async (req: AuthRequest, res: Response): Promise
       return;
     }
 
-    await logAttendance(employee_id, avatar);
+    await logAttendance(employee_id, avatar.trim());
     res.json({ message: "Attendance recorded successfully" });
   } catch (error) {
     console.error("Error logging attendance:", error);

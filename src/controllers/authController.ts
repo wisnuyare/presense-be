@@ -1,29 +1,26 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { AuthRequest } from "../types/express"; // Import custom request type
-import { createUser, getUserByUsername } from "../models/userModel";
+import { AuthRequest } from "../types/express"; 
 import { createEmployee, getEmployeeNameByUserId } from "../models/employeeModel";
+import { createUser, getUserByUsername } from "../models/userModel";
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
   try {
-    // Fetch user from database using model function
-    const user = await getUserByUsername(username);
+    const user = await getUserByUsername(username.trim());
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
     }
 
-    // Compare password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       res.status(401).json({ message: "Invalid password" });
       return;
     }
 
-    // Generate JWT token
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, {
       expiresIn: "1h",
     });
@@ -65,18 +62,15 @@ export const registerUser = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    // Check if user already exists
-    const existingUser = await getUserByUsername(username);
+    const existingUser = await getUserByUsername(username.trim());
     if (existingUser) {
       res.status(400).json({ message: "Username already taken" });
       return;
     }
 
-    // Create user & get user ID
-    const userId = await createUser(username, password, role);
+    const userId = await createUser(username.trim(), password, role);
 
-    // Create employee record linked to user
-    await createEmployee(name, birthdate, userId);
+    await createEmployee(name.trim(), birthdate, userId);
 
     res.status(201).json({ message: "Employee registered successfully" });
   } catch (error) {
