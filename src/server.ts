@@ -16,14 +16,20 @@ dotenv.config();
 
 const app = express();
 
-async function testDatabaseConnection() {
+async function testDatabaseConnection(retryCount = 0) {
   try {
       const connection = await db.getConnection();
       const [rows] = await connection.execute('SELECT DATABASE()');
       connection.release();
       console.log('Database connection test:', rows);
-  } catch (error) {
-      console.error('Database connection test failed:', error);
+  } catch (error: any) {
+      if (error.code === 'EAI_AGAIN' && retryCount < 3) { // Retry up to 3 times
+          console.log(`Retry database connection (${retryCount + 1})...`);
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000)); // Exponential backoff
+          await testDatabaseConnection(retryCount + 1);
+      } else {
+          console.error('Database connection test failed:', error);
+      }
   }
 }
 
