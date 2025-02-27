@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { AuthRequest } from "../types/express"; 
+import { AuthRequest } from "../types/express";
 import { createEmployee, getEmployeeNameByUserId } from "../models/employeeModel";
 import { createUser, getUserByUsername } from "../models/userModel";
 

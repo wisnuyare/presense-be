@@ -13,6 +13,12 @@ const router = express.Router();
 
 router.get("/employees", authenticateUser, authorizeRole(UserRole.HR), fetchEmployees);
 
-router.put("/employees", validateInput(registerValidationRules), authenticateUser, authorizeRole(UserRole.HR), editEmployee);
+router.put(
+  "/employees",
+  validateInput(registerValidationRules),
+  authenticateUser,
+  authorizeRole(UserRole.HR),
+  editEmployee
+);
 
 export default router;

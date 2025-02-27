@@ -1,0 +1,53 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: asia-southeast2
+  REPOSITORY: presensee-repo
+  SERVICE_NAME: ${{ secrets.GCP_PROJECT_ID }}
+  DB_INSTANCE: ${{ secrets.DB_NAME }}
+
+jobs:
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Docker Auth
+        run: gcloud auth configure-docker $REGION-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |-
+          docker build -t $REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPOSITORY/$SERVICE_NAME:$GITHUB_SHA .
+
+      - name: Push Docker image
+        run: |-
+          docker push $REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPOSITORY/$SERVICE_NAME:$GITHUB_SHA
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: $SERVICE_NAME
+          image: $REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPOSITORY/$SERVICE_NAME:$GITHUB_SHA
+          region: $REGION
+          env_vars: |
+            NODE_ENV=production
+            DB_HOST=/cloudsql/$GCP_PROJECT_ID:$REGION:$DB_INSTANCE
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_NAME=${{ secrets.DB_NAME }}
+          flags: --set-cloudsql-instances=$GCP_PROJECT_ID:$REGION:$DB_INSTANCE

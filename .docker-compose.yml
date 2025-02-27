@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: An4kMony#t
+      MYSQL_DATABASE: presensee_prod
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: B3lumM4nd!
+    ports:
+      - "5432:5432"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

@@ -1,16 +1,20 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import fs from "fs/promises";
-import multer from "multer";
-import path from "path";
-import sharp from "sharp";
+import { Storage } from "@google-cloud/storage";
 import { v4 as uuidv4 } from "uuid";
+import multer from "multer";
+import sharp from "sharp";
 
-const storage = multer.memoryStorage();
+const storage = new Storage({
+  projectId: process.env.GCP_PROJECT_ID,
+  credentials: JSON.parse(process.env.GCP_SA_KEY || "{}"),
+});
+
+const bucket = storage.bucket(process.env.GCS_BUCKET_NAME || "");
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, 
+    fileSize: 5 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
@@ -32,19 +36,25 @@ export const uploadImage = (fieldName: string): RequestHandler[] => [
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" }) as unknown as void;
       }
-      const uploadDir = path.join(__dirname, "../../public/uploads");
-      await fs.mkdir(uploadDir, { recursive: true });
 
       const processedImage = await sharp(req.file.buffer)
         .resize(800, 800, { fit: "inside" })
         .jpeg({ quality: 80 })
         .toBuffer();
 
-      const filename = `${uuidv4()}.jpg`;
-      const filePath = path.join(uploadDir, filename);
-      await fs.writeFile(filePath, processedImage);
+      const filename = `uploads/${uuidv4()}-${Date.now()}.jpg`;
+      const file = bucket.file(filename);
+      await file.save(processedImage, {
+        metadata: {
+          contentType: "image/jpeg",
+          cacheControl: "public, max-age=31536000",
+        },
+      });
 
-      req.imageUrl = `/uploads/${filename}`;
+      // Make public (if needed)
+      // await file.makePublic();
+
+      req.imageUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
 
       next();
     } catch (error) {

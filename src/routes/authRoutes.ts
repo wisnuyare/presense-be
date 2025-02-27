@@ -16,12 +16,12 @@ const registerValidationRules = [
 ];
 
 const loginValidationRules = [
-    check("username")
+  check("username")
     .trim()
     .escape()
     .isLength({ min: 1 })
     .withMessage("Username must be at least 1 characters long"),
-]
+];
 
 const router = express.Router();
 
