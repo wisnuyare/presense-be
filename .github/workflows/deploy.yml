@@ -8,7 +8,7 @@ on:
 env:
   REGION: asia-southeast2
   REPOSITORY: presensee-repo
-  SERVICE_NAME: presensee-service  # Use static service name instead of secret
+  SERVICE_NAME: presensee-backend
 
 jobs:
   setup-build-deploy:
