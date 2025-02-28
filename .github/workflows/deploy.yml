@@ -18,6 +18,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Decode credentials
+        id: decode-creds
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 -d > decoded-creds.json
+          echo "DECODED_CREDS=$(cat decoded-creds.json)" >> $GITHUB_ENV
+
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -56,7 +62,6 @@ jobs:
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
             GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-credentials.json
           secrets: |
-            gcp-credentials=${{ secrets.GCP_SA_KEY }}:/secrets
+            gcp-credentials=${{ env.DECODED_CREDS }}:/secrets/gcp-credentials.json
           flags: --set-cloudsql-instances=${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_INSTANCE }}
