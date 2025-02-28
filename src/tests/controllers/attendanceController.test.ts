@@ -18,7 +18,9 @@ describe("Attendance Controller", () => {
       await recordAttendance(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Photo is required and user must be authenticated" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Photo is required and user must be authenticated",
+      });
     });
 
     test("should log attendance", async () => {
@@ -41,7 +43,9 @@ describe("Attendance Controller", () => {
       await recordAttendance(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Photo is required and user must be authenticated" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Photo is required and user must be authenticated",
+      });
     });
   });
 
@@ -49,7 +53,9 @@ describe("Attendance Controller", () => {
     test("should return attendance records", async () => {
       const req = { query: {} } as Request;
       const res = { json: jest.fn() } as unknown as Response;
-      const attendanceData = [{ id: 1, name: "John Doe", timestamp: "2023-10-01", photo: "photo.jpg" }];
+      const attendanceData = [
+        { id: 1, name: "John Doe", timestamp: "2023-10-01", photo: "photo.jpg" },
+      ];
 
       (getAllAttendance as jest.Mock).mockResolvedValue(attendanceData);
 

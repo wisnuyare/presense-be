@@ -21,7 +21,14 @@ describe("Attendance Model", () => {
   });
 
   test("getAllAttendance should return all attendance records", async () => {
-    const mockExecute = jest.spyOn(db, "execute").mockResolvedValue([[{ id: 1, name: "John Doe", timestamp: "2023-01-01", photo: "photo.jpg" }] as RowDataPacket[], []]);
+    const mockExecute = jest
+      .spyOn(db, "execute")
+      .mockResolvedValue([
+        [
+          { id: 1, name: "John Doe", timestamp: "2023-01-01", photo: "photo.jpg" },
+        ] as RowDataPacket[],
+        [],
+      ]);
 
     const attendance = await getAllAttendance();
 
@@ -33,6 +40,8 @@ describe("Attendance Model", () => {
     `.trim(),
       []
     );
-    expect(attendance).toEqual([{ id: 1, name: "John Doe", timestamp: "2023-01-01", photo: "photo.jpg" }]);
+    expect(attendance).toEqual([
+      { id: 1, name: "John Doe", timestamp: "2023-01-01", photo: "photo.jpg" },
+    ]);
   });
 });

@@ -73,7 +73,9 @@ describe("Auth Middleware", () => {
       middleware(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(403);
-      expect(res.json).toHaveBeenCalledWith({ message: "Access denied. Insufficient permissions." });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Access denied. Insufficient permissions.",
+      });
     });
 
     it("should call next if user role is sufficient", () => {

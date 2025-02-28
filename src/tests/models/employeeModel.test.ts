@@ -1,4 +1,10 @@
-import { createEmployee, getAllEmployees, getEmployeeIdByUserId, getEmployeeNameByUserId, updateEmployee } from "../../models/employeeModel";
+import {
+  createEmployee,
+  getAllEmployees,
+  getEmployeeIdByUserId,
+  getEmployeeNameByUserId,
+  updateEmployee,
+} from "../../models/employeeModel";
 import db from "../../config/db";
 import { OkPacket, RowDataPacket } from "mysql2";
 
@@ -21,7 +27,9 @@ describe("Employee Model", () => {
   });
 
   test("getAllEmployees should return all employees", async () => {
-    const mockExecute = jest.spyOn(db, "execute").mockResolvedValue([[{ id: 1, name: "John Doe" }] as RowDataPacket[], []]);
+    const mockExecute = jest
+      .spyOn(db, "execute")
+      .mockResolvedValue([[{ id: 1, name: "John Doe" }] as RowDataPacket[], []]);
 
     const employees = await getAllEmployees();
 
@@ -30,7 +38,9 @@ describe("Employee Model", () => {
   });
 
   test("getEmployeeIdByUserId should return employee id", async () => {
-    const mockExecute = jest.spyOn(db, "execute").mockResolvedValue([[{ id: 1 }] as RowDataPacket[], []]);
+    const mockExecute = jest
+      .spyOn(db, "execute")
+      .mockResolvedValue([[{ id: 1 }] as RowDataPacket[], []]);
 
     const employeeId = await getEmployeeIdByUserId(1);
 
@@ -47,7 +57,9 @@ describe("Employee Model", () => {
   });
 
   test("getEmployeeNameByUserId should return employee name", async () => {
-    const mockExecute = jest.spyOn(db, "execute").mockResolvedValue([[{ name: "John Doe" }] as RowDataPacket[], []]);
+    const mockExecute = jest
+      .spyOn(db, "execute")
+      .mockResolvedValue([[{ name: "John Doe" }] as RowDataPacket[], []]);
 
     const employeeName = await getEmployeeNameByUserId(1);
 

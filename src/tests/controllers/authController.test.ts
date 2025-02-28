@@ -115,7 +115,11 @@ describe("Auth Controller", () => {
 
     test("should return 401 if password is incorrect", async () => {
       const hashedPassword = await bcrypt.hash("wrongpassword", 10);
-      (getUserByUsername as jest.Mock).mockResolvedValue({ id: 1, username: "testuser", password: hashedPassword });
+      (getUserByUsername as jest.Mock).mockResolvedValue({
+        id: 1,
+        username: "testuser",
+        password: hashedPassword,
+      });
 
       const req = {
         body: { username: "testuser", password: "password123" },
@@ -133,7 +137,11 @@ describe("Auth Controller", () => {
 
     test("should login a user", async () => {
       const hashedPassword = await bcrypt.hash("password123", 10);
-      (getUserByUsername as jest.Mock).mockResolvedValue({ id: 1, username: "testuser", password: hashedPassword });
+      (getUserByUsername as jest.Mock).mockResolvedValue({
+        id: 1,
+        username: "testuser",
+        password: hashedPassword,
+      });
 
       const req = {
         body: { username: "testuser120", password: "password123" },
@@ -146,7 +154,10 @@ describe("Auth Controller", () => {
       await loginUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ message: "Login successful", token: expect.any(String) });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Login successful",
+        token: expect.any(String),
+      });
     });
 
     test("should handle errors", async () => {
