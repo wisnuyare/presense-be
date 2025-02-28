@@ -1,7 +1,7 @@
 import express from "express";
 import { check } from "express-validator";
 import { authenticateUser, authorizeRole } from "../middleware/authMiddleware";
-import { editEmployee, fetchEmployees } from "../controllers/employeeController";
+import { editEmployee, fetchEmployees, removeEmployee } from "../controllers/employeeController";
 import { UserRole } from "../types/userRole";
 import { validateInput } from "../middleware/validateInput";
 
@@ -21,4 +21,5 @@ router.put(
   editEmployee
 );
 
+router.delete("/employees", authenticateUser, authorizeRole(UserRole.HR), removeEmployee);
 export default router;

@@ -62,3 +62,18 @@ export const updateEmployee = async (name: string, birthdate: string, userId: nu
     userId,
   ]);
 };
+
+export const deleteEmployee = async (employeeId: number, userId: number) => {
+  try {
+    await db.execute("DELETE FROM attendance WHERE employee_id = ?", [employeeId]);
+
+    await db.execute("DELETE FROM users WHERE id = ?", [userId]);
+
+    await db.execute("DELETE FROM employees WHERE id = ?", [employeeId]);
+
+    return { message: "Employee and related records deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting employee:", error);
+    throw error;
+  }
+};
