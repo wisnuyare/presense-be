@@ -15,7 +15,7 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:5173", "http://storage.googleapis.com"];
+const allowedOrigins = ["http://localhost:5173", "https://storage.googleapis.com"];
 
 app.use(
   cors({
