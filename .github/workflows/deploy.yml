@@ -6,9 +6,11 @@ on:
       - master
 
 env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: asia-southeast2
   REPOSITORY: presensee-repo
-  SERVICE_NAME: presensee-backend
+  SERVICE_NAME: ${{ secrets.GCP_PROJECT_ID }}
+  DB_INSTANCE: ${{ secrets.DB_INSTANCE }}
 
 jobs:
   setup-build-deploy:
@@ -19,11 +21,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Decode Service Account
-        run: |
-          echo "${{ secrets.GCP_SA_KEY }}" > service-account.json
-          echo "GCP_SA_ENCODED=$(base64 -w0 service-account.json)" >> $GITHUB_ENV
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -32,7 +29,7 @@ jobs:
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
 
       - name: Configure Docker Auth
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
@@ -56,10 +53,6 @@ jobs:
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_NAME=${{ secrets.DB_NAME }}
-            GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
-            GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-          secrets: |
-            gcp-credentials=${{ env.GCP_SA_ENCODED }}:/secrets/gcp-credentials.json
-          flags: |
-            --set-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_INSTANCE }}
+            GCS_BUCKET_NAME= ${{secrets.GCS_BUCKET_NAME}}
+            JWT_SECRET= ${{secrets.JWT_SECRET}}
+          flags: --set-cloudsql-instances=${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_INSTANCE }}
