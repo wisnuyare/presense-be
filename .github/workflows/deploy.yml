@@ -6,11 +6,9 @@ on:
       - master
 
 env:
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: asia-southeast2
   REPOSITORY: presensee-repo
-  SERVICE_NAME: ${{ secrets.GCP_PROJECT_ID }}
-  DB_INSTANCE: ${{ secrets.DB_INSTANCE }}
+  SERVICE_NAME: presensee-service  # Use static service name instead of secret
 
 jobs:
   setup-build-deploy:
@@ -18,14 +16,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Decode credentials
-        id: decode-creds
-        run: |
-          echo "${{ secrets.GCP_SA_KEY }}" | base64 -d > decoded-creds.json
-          echo "DECODED_CREDS=$(cat decoded-creds.json)" >> $GITHUB_ENV
-
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Decode Service Account
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" > service-account.json
+          echo "GCP_SA_ENCODED=$(base64 -w0 service-account.json)" >> $GITHUB_ENV
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -35,7 +32,7 @@ jobs:
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Configure Docker Auth
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
@@ -60,8 +57,9 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_NAME=${{ secrets.DB_NAME }}
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
-            GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }}
+            GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
           secrets: |
-            gcp-credentials=${{ env.DECODED_CREDS }}:/secrets/gcp-credentials.json
-          flags: --set-cloudsql-instances=${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_INSTANCE }}
+            gcp-credentials=${{ env.GCP_SA_ENCODED }}:/secrets/gcp-credentials.json
+          flags: |
+            --set-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_INSTANCE }}
