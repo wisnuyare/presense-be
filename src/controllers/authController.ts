@@ -21,16 +21,16 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    const name = await getEmployeeNameByUserId(user.id);
+
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, {
       expiresIn: "1h",
     });
 
-    const name = await getEmployeeNameByUserId(user.id);
-
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     res.json({ message: "Login successful", role: user.role, name });
@@ -43,7 +43,7 @@ export const logoutUser = (req: Request, res: Response): void => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
   });
   res.json({ message: "Logout successful" });
 };
