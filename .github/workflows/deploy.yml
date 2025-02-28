@@ -56,7 +56,7 @@ jobs:
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
             GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            GCP_SA_KEY=/secrets/gcp-credentials.json
+            GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-credentials.json
           secrets: |
             gcp-credentials=${{ secrets.GCP_SA_KEY }}:/secrets
           flags: --set-cloudsql-instances=${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_INSTANCE }}
