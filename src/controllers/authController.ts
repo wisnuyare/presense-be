@@ -8,16 +8,21 @@ import { createUser, getUserByUsername } from "../models/userModel";
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
   try {
+    if (!username || !password) {
+      res.status(400).json({ message: "Username and password are required" });
+      return;
+    }
+
     const user = await getUserByUsername(username.trim());
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
+      res.status(401).json({ message: "Invalid username or password" });
       return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid password" });
+      res.status(401).json({ message: "Invalid username or password" });
       return;
     }
 
@@ -35,6 +40,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     res.json({ message: "Login successful", role: user.role, name });
   } catch (error) {
+    console.error("Error during login:", error);
     res.status(500).json({ message: "Server error", error });
   }
 };

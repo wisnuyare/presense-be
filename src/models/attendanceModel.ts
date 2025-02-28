@@ -10,7 +10,7 @@ export const getAllAttendance = async (search?: string) => {
         SELECT a.id, e.name, a.timestamp, a.photo
         FROM attendance a
         JOIN employees e ON a.employee_id = e.id
-    `;
+    `.trim();
   let params: any[] = [];
 
   if (search) {

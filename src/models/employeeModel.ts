@@ -26,7 +26,7 @@ export const getEmployeeIdByUserId = async (user_id: number): Promise<number | n
         SELECT id
         FROM employees 
         WHERE user_id = ?
-    `;
+    `.trim();
   let params: any[] = [user_id];
 
   const [rows] = await db.execute<RowDataPacket[]>(query, params);
@@ -43,7 +43,7 @@ export const getEmployeeNameByUserId = async (user_id: number): Promise<number |
         SELECT name
         FROM employees 
         WHERE user_id = ?
-    `;
+    `.trim();
   let params: any[] = [user_id];
 
   const [rows] = await db.execute<RowDataPacket[]>(query, params);

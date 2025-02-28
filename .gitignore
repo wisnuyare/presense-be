@@ -4,6 +4,8 @@ dist-ssr
 *.local
 .env
 .prettierrc
+.prettierignore
+coverage
 public/uploads/
 src/migration/
 service-account.json
