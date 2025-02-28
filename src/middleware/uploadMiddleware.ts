@@ -4,10 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import multer from "multer";
 import sharp from "sharp";
 
-const storage = new Storage({
-  projectId: process.env.GCP_PROJECT_ID,
-  credentials: JSON.parse(process.env.GCP_SA_KEY || "{}"),
-});
+const storage = new Storage();
 
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME || "");
 

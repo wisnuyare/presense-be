@@ -58,7 +58,5 @@ jobs:
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             GCP_SA_KEY=/secrets/gcp-credentials.json
           secrets: |
-            - name: gcp-credentials
-              secret: ${{ secrets.GCP_SA_KEY }}
-              mountPath: /secrets
+            gcp-credentials=${{ secrets.GCP_SA_KEY }}:/secrets
           flags: --set-cloudsql-instances=${{ env.GCP_PROJECT_ID }}:${{ env.REGION }}:${{ secrets.DB_INSTANCE }}
