@@ -7,7 +7,6 @@ import { validateInput } from "../middleware/validateInput";
 
 const registerValidationRules = [
   check("name").trim().escape().isLength({ min: 1 }).withMessage("Name is required"),
-  check("email").isEmail().normalizeEmail().withMessage("Invalid email"),
   check("username")
     .trim()
     .escape()
