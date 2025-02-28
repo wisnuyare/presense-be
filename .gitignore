@@ -7,5 +7,4 @@ dist-ssr
 .prettierignore
 coverage
 public/uploads/
-src/migration/
 service-account.json
